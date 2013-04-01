@@ -1,77 +1,89 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.igz</groupId>
-  <artifactId>performanceTest</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.igz</groupId>
+	<artifactId>performanceTest</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
 
-  <dependencies>
-	<dependency>
-	  <groupId>junit</groupId>
-	  <artifactId>junit</artifactId>
-	  <version>4.11</version>
-	  <scope>test</scope>
-	</dependency>
-	<dependency>
-	  <groupId>commons-lang</groupId>
-	  <artifactId>commons-lang</artifactId>
-	  <version>2.6</version>
-	  <scope>compile</scope>
-	</dependency>
-	<dependency>
-	  <groupId>org.mongodb</groupId>
-	  <artifactId>mongo-java-driver</artifactId>
-	  <version>2.10.1</version>
-	  <scope>compile</scope>
-	</dependency>
-	<dependency>
-	    <groupId>redis.clients</groupId>
-	    <artifactId>jedis</artifactId>
-	    <version>2.1.0</version>
-	    <type>jar</type>
-	    <scope>compile</scope>
-	</dependency>
-	<dependency>
-	    <groupId>org.codehaus.jackson</groupId>
-	    <artifactId>jackson-core-asl</artifactId>
-	    <version>1.9.12</version>
-	    <type>jar</type>
-	    <scope>compile</scope>
-	</dependency>
-	<dependency>
-	    <groupId>org.codehaus.jackson</groupId>
-	    <artifactId>jackson-mapper-asl</artifactId>
-	    <version>1.9.12</version>
-	    <type>jar</type>
-	    <scope>compile</scope>
-	</dependency>
-	<dependency>
-	    <groupId>mysql</groupId>
-	    <artifactId>mysql-connector-java</artifactId>
-	    <version>5.1.24</version>
-	    <type>jar</type>
-	    <scope>compile</scope>
-	</dependency>
-    <!-- igz dependencies -->
-	<dependency>
-		<groupId>com.igzcode.java</groupId>
-		<artifactId>igzcode-gae</artifactId>
-		<version>2.0.2-beta-SNAPSHOT</version>
-	</dependency>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- Mongodb -->
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>2.10.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- Redis -->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.1.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<!--  Jackson -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>1.9.12</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.12</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<!--  MYSQL -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.24</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<!-- GAE & igz dependencies -->
+		<dependency>
+			<groupId>com.igzcode.java</groupId>
+			<artifactId>igzcode-gae</artifactId>
+			<version>2.0.2-beta-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>com.google.appengine</groupId>
 			<artifactId>appengine-api-stubs</artifactId>
 			<version>1.7.3</version>
 			<scope>test</scope>
-		</dependency>	
-	<dependency>
-		<groupId>com.google.appengine</groupId>
-		<artifactId>appengine-testing</artifactId>
-		<version>1.7.3</version>
-		<scope>test</scope>
-	</dependency>
-  </dependencies>
-  
-  	<repositories>
+		</dependency>
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-testing</artifactId>
+			<version>1.7.3</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- MS SQL -->
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>sqljdbc4</artifactId>
+			<version>4.0</version>
+		</dependency>
+	</dependencies>
+
+
+	<repositories>
 		<repository>
 			<id>igzcode-releases</id>
 			<name>Repositorio de IGZcode</name>
@@ -82,5 +94,5 @@
 			<name>Repositorio de IGZcode</name>
 			<url>http://nexus.igzcode.com/content/repositories/snapshots/</url>
 		</repository>
-	</repositories>    
+	</repositories>
 </project>
