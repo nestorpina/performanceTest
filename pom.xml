@@ -51,5 +51,36 @@
 	    <type>jar</type>
 	    <scope>compile</scope>
 	</dependency>
+    <!-- igz dependencies -->
+	<dependency>
+		<groupId>com.igzcode.java</groupId>
+		<artifactId>igzcode-gae</artifactId>
+		<version>2.0.2-beta-SNAPSHOT</version>
+	</dependency>
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-api-stubs</artifactId>
+			<version>1.7.3</version>
+			<scope>test</scope>
+		</dependency>	
+	<dependency>
+		<groupId>com.google.appengine</groupId>
+		<artifactId>appengine-testing</artifactId>
+		<version>1.7.3</version>
+		<scope>test</scope>
+	</dependency>
   </dependencies>
+  
+  	<repositories>
+		<repository>
+			<id>igzcode-releases</id>
+			<name>Repositorio de IGZcode</name>
+			<url>http://nexus.igzcode.com/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>igzcode-snapshots</id>
+			<name>Repositorio de IGZcode</name>
+			<url>http://nexus.igzcode.com/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>    
 </project>
