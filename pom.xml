@@ -86,6 +86,18 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.2-alpha1</version>
 		</dependency>
+		<!-- MongoDB async driver -->
+		<dependency>
+			<groupId>com.allanbank</groupId>
+			<artifactId>mongodb-async-driver</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<!-- elastic search -->		
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>0.19.8</version>
+		</dependency> 
             		
 	</dependencies>
 
@@ -100,6 +112,17 @@
 			<id>igzcode-snapshots</id>
 			<name>Repositorio de IGZcode</name>
 			<url>http://nexus.igzcode.com/content/repositories/snapshots/</url>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<id>allanbank</id>
+			<name>Allanbank Releases</name>
+			<url>http://www.allanbank.com/repo/</url>
+			<layout>default</layout>
 		</repository>
 	</repositories>
 </project>
