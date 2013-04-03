@@ -17,30 +17,42 @@ import java.util.concurrent.Future;
 import org.apache.commons.lang.time.StopWatch;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Test;
 
 import com.izg.test.tasks.MysqlReadTask;
 
 /**
- * Download driver from : http://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=11774 
- * Add to local repo : mvn install:install-file -Dfile=sqljdbc4.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
- * Add dependency : 
+ * 
+ * This tests inserts a json object in a ms sqlserver using the sqljdbc4 driver
+ * After inserting the specified number of elements, using the number
+ * of threads specified, it then retrieves each item by id
+ *  
+ * Configuration Steps :
+ * <ul> 
+ * <li>Download driver from : http://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=11774</li> 
+ * <li>Add to local repo : mvn install:install-file -Dfile=sqljdbc4.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar</li>
+ * <li>Add dependency :</li>
+ * <pre> 
 <dependency>
   <groupId>com.microsoft.sqlserver</groupId>
   <artifactId>sqljdbc4</artifactId>
   <version>4.0</version>
 </dependency>
-
- * Create table
+</pre>
+ *
+ * <li>Create table</li>
+ * <pre>
 sqlcmd -E -Q "CREATE TABLE testtable ( id VARCHAR(50)  NOT NULL, json TEXT NOT NULL);"
 sqlcmd -E -Q "ALTER TABLE testtable ADD PRIMARY KEY (id)"
-
- * Utils
+</pre>
+ *
+ * <li>sqlcmd commands :</li> 
+<pre>
 show databases : EXEC sp_databases
 show tables : select name from master..sysobjects where xtype = 'U';
 sqlcmd -E -Q "select count(*) from testtable;"
 sqlcmd -E -Q "select count(*) from testtable;"
-
+</pre>
+ * </ul>
  * @author npina
  *
  */
@@ -124,13 +136,13 @@ public class MSSqlServerThreadedTest {
 
 	}
 
-  @Test
+//  @Test
   public void testInsert100000_10threads() throws InterruptedException, ExecutionException, ClassNotFoundException, SQLException {
       testInsert(100000, 10, jsonSmall);
   }
 
 //  @Test
-  public void testIsert50000_10threads() throws InterruptedException, ExecutionException, ClassNotFoundException, SQLException {
+  public void testInsert50000_10threads() throws InterruptedException, ExecutionException, ClassNotFoundException, SQLException {
       testInsert(50000,10, jsonSmall);
   }
 }

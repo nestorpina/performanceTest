@@ -24,6 +24,7 @@ import com.google.appengine.api.NamespaceManager;
 import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.igz.performance.datastore.DatastoreObject;
 import com.izg.test.tasks.DatastoreReadTask;
@@ -32,6 +33,9 @@ import com.izg.test.tasks.DatastoreReadTask;
  *
  * @author npina
  *
+ * This tests makes http requests to nestor-shop.appspot.com/s/performance/insert , which inserts
+ * a json item in the datastore. After inserting the specified number of elements, using the number
+ * of threads specified, it thens retrieves each item by calling nestor-shop.appspot.com/s/performance/select/{id}
  */
 public class DatastoreThreadedTest {
 
@@ -50,6 +54,8 @@ public class DatastoreThreadedTest {
 
     @After
     public void tearDown() {
+        List<Key<DatastoreObject>> keys = ofy().load().type(DatastoreObject.class).keys().list();
+        ofy().delete().keys(keys).now();
         this.helper.tearDown();
     }
     
@@ -120,11 +126,11 @@ public class DatastoreThreadedTest {
 
   @Test
   public void testInsert100000_10threads() throws InterruptedException, ExecutionException, ClassNotFoundException, SQLException {
-      testInsert(100000, 10, jsonSmall);
+      testInsert(10000, 10, jsonSmall);
   }
 
-//  @Test
-  public void testIsert50000_10threads() throws InterruptedException, ExecutionException, ClassNotFoundException, SQLException {
+  @Test
+  public void testInsert50000_10threads() throws InterruptedException, ExecutionException, ClassNotFoundException, SQLException {
       testInsert(50000,10, jsonSmall);
   }
 }

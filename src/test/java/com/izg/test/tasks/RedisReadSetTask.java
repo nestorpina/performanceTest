@@ -1,6 +1,7 @@
 package com.izg.test.tasks;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.junit.Assert;
@@ -8,11 +9,13 @@ import org.junit.Assert;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Protocol;
 
-public class RedisReadTask implements Callable<Integer>{
+public class RedisReadSetTask implements Callable<Integer>{
     private final List<String> list;
+    private final String[] fields;
 
 
-    public RedisReadTask( List<String> list) {
+    public RedisReadSetTask( List<String> list, Set<String> fields) {
+    	this.fields = fields.toArray(new String[fields.size()]);
         this.list = list;
     }
 
@@ -22,7 +25,7 @@ public class RedisReadTask implements Callable<Integer>{
 		jedis.connect();
 
     	for (String id : list) {
-    		String object = jedis.get(id);
+    		List<String> object = jedis.hmget(id, fields);
         	Assert.assertNotNull(object);
 		}
     	jedis.disconnect();

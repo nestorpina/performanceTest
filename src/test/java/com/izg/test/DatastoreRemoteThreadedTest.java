@@ -19,7 +19,6 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Test;
 
 import com.google.gson.Gson;
 import com.googlecode.objectify.ObjectifyService;
@@ -31,6 +30,9 @@ import com.izg.test.tasks.DatastoreRemoteReadTask;
  *
  * @author npina
  *
+ * This tests makes http requests to nestor-shop.appspot.com/s/performance/insert , which inserts
+ * a json item in the datastore. After inserting the specified number of elements, using the number
+ * of threads specified, it thens retrieves each item by calling nestor-shop.appspot.com/s/performance/select/{id}
  */
 public class DatastoreRemoteThreadedTest {
 
@@ -128,7 +130,7 @@ public class DatastoreRemoteThreadedTest {
       testInsert(10, 10);
   }
 
-  @Test
+//  @Test
   public void testInsert50000_10threads() throws InterruptedException, ExecutionException, ClientProtocolException, IOException {
       testInsert(50000,10);
   }
