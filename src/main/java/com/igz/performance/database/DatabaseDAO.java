@@ -4,9 +4,9 @@ public interface DatabaseDAO {
 
 	public abstract void init();
 
-	public abstract Object insert(Object id, String json);
+	public abstract String insert(String id, String json);
 
-	public abstract int select(Object id);
+	public abstract int select(String id);
 
 	public abstract void removeAll();
 	

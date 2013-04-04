@@ -12,7 +12,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
 
-public class RabbitMQProducer extends RabbitMQ implements Callable<List<Object>> {
+public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>> {
 
 	private String name;
 	private int numberOfRequests;
@@ -42,12 +42,12 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<Object>>
 		this.operation = operation;
 	}
 
-	public List<Object> call() throws IOException {
+	public List<String> call() throws IOException {
 
-		List<Object> ids = new ArrayList<Object>();
+		List<String> ids = new ArrayList<String>();
 
 		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("localhost");
+		factory.setHost(HOST);
 		Connection connection;
 		connection = factory.newConnection();
 		channel = connection.createChannel();
@@ -67,10 +67,10 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<Object>>
 
 	}
 
-	private List<Object> sendSelects() throws IOException {
-		List<Object> ids = new ArrayList<Object>();
+	private List<String> sendSelects() throws IOException {
+		List<String> ids = new ArrayList<String>();
 		for (Object id : idsToSelect) {
-			String message = operation + "|" + id;
+			String message = operation + SEPARATOR + id;
 			channel.basicPublish("", queue_name, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
 			if(debug) {
 				System.out.println(" [" + name + "] Sent '" + message + "'");
@@ -79,12 +79,12 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<Object>>
 		return ids;
 	}
 
-	private List<Object> sendInserts() throws IOException {
-		List<Object> ids = new ArrayList<Object>();
+	private List<String> sendInserts() throws IOException {
+		List<String> ids = new ArrayList<String>();
 		for (int i = 0; i < numberOfRequests; i++) {
 			String id = UUID.randomUUID().toString();
 			ids.add(id);
-			String message = operation + "|" + id;
+			String message = operation + SEPARATOR + id;
 			channel.basicPublish("", queue_name, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
 			if(debug) {
 				System.out.println(" [" + name + "] Sent '" + message + "'");

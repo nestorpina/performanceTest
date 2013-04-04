@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class MysqlDAO implements DatabaseDAO {
 
-	Connection conn;
+	private Connection conn;
 
 	/*
 	 * (non-Javadoc)
@@ -34,7 +34,7 @@ public class MysqlDAO implements DatabaseDAO {
 	 * 
 	 * @see com.igz.performance.database.DatabaseDAO#insert()
 	 */
-	public Object insert(Object id, String json) {
+	public String insert(String id, String json) {
 		try {
 			PreparedStatement preparedStatement = conn.prepareStatement("insert into  testtable values (?, ?)");
 			preparedStatement.setString(1, (String) id);
@@ -52,23 +52,26 @@ public class MysqlDAO implements DatabaseDAO {
 	 * 
 	 * @see com.igz.performance.database.DatabaseDAO#select()
 	 */
-	public int select(Object id) {
+	public int select(String id) {
 
 		PreparedStatement preparedStatement;
 		ArrayList<String> result = new ArrayList<String>();
 		try {
-			preparedStatement = conn.prepareStatement("SELECT * FROM testtable WHERE id = ?");
+			// TODO : If we retrieve all the object (not only the id) we got a memory exception
+			preparedStatement = conn.prepareStatement("SELECT id FROM testtable WHERE id = ?");
 
 			preparedStatement.setString(1, (String) id);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-				result.add(resultSet.getString("json"));
+				result.add("" /* resultSet.getString("json") */);
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 
-		if (result.size() > 1) {
+		if (result.size() == 0) {
+			System.err.println("RESULT NOT FOUND LOOKING BY ID:" + id);
+		} else if (result.size() > 1) {
 			System.err.println("FOUND MORE THAN ONE RESULT LOOKING BY ID:" + id + " size:" + result.size());
 		}
 

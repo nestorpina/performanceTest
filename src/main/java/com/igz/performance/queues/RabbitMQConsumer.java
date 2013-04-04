@@ -13,6 +13,7 @@ import com.rabbitmq.client.ShutdownSignalException;
 
 public class RabbitMQConsumer extends RabbitMQ implements Runnable {
 
+	private static final int PREFETCH_COUNT = 1;
 	private String name;
 	private DatabaseDAO dao;
 	private String json;
@@ -32,12 +33,12 @@ public class RabbitMQConsumer extends RabbitMQ implements Runnable {
 		Channel channel = null;
 		try {
 			ConnectionFactory factory = new ConnectionFactory();
-			factory.setHost("localhost");
+			factory.setHost(HOST);
 			connection = factory.newConnection();
 			channel = connection.createChannel();
 
 			channel.queueDeclare(queue_name, QUEUE_CONFIG_DURABLE, QUEUE_CONFIG_EXCLUSIVE, QUEUE_CONFIG_AUTODELETE, null);
-			channel.basicQos(1);
+			channel.basicQos(PREFETCH_COUNT);
 
 			if (debug) {
 				System.out.println(" [" + name + "] Consumer started");
@@ -54,7 +55,7 @@ public class RabbitMQConsumer extends RabbitMQ implements Runnable {
 				if (debug) {
 					System.out.println(" [" + name + "] Received '" + message + "'");
 				}
-				String[] msgSplitted = message.split("\\|");
+				String[] msgSplitted = message.split("\\"+SEPARATOR);
 				OperationType operation = OperationType.valueOf(msgSplitted[0]);
 				String id = msgSplitted[1];
 
