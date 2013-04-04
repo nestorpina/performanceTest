@@ -54,19 +54,29 @@ public class MysqlDAO implements DatabaseDAO {
 	 */
 	public int select(String id) {
 
-		PreparedStatement preparedStatement;
+		PreparedStatement preparedStatement = null;
 		ArrayList<String> result = new ArrayList<String>();
 		try {
 			// TODO : If we retrieve all the object (not only the id) we got a memory exception
-			preparedStatement = conn.prepareStatement("SELECT id FROM testtable WHERE id = ?");
+			preparedStatement = conn.prepareStatement("SELECT * FROM testtable WHERE id = ?");
 
 			preparedStatement.setString(1, (String) id);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
 				result.add("" /* resultSet.getString("json") */);
 			}
+			resultSet.close();
+
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
+		} finally {
+			try {
+				if (preparedStatement != null) {
+					preparedStatement.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if (result.size() == 0) {
@@ -114,5 +124,14 @@ public class MysqlDAO implements DatabaseDAO {
 			throw new RuntimeException(e);
 		}
 		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.igz.performance.database.DatabaseDAO#close()
+	 */
+	public void close() throws Throwable {
+		conn.close();
 	}
 }

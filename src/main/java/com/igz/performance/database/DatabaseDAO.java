@@ -11,5 +11,7 @@ public interface DatabaseDAO {
 	public abstract void removeAll();
 	
 	public abstract int count();
+	
+	public abstract void close() throws Throwable;
 
 }

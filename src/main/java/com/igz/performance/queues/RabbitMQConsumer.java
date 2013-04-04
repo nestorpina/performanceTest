@@ -26,6 +26,14 @@ public class RabbitMQConsumer extends RabbitMQ implements Runnable {
 
 		dao.init();
 	}
+	
+	public DatabaseDAO getDao() {
+		return dao;
+	}
+
+	public void setDao(DatabaseDAO dao) {
+		this.dao = dao;
+	}
 
 	public void run() {
 

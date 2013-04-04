@@ -15,9 +15,9 @@ public class MongoDBDAO implements DatabaseDAO {
 	private static final String DATABASE = "mydb";
 	private static final String HOST = "localhost";
 	private static final int PORT = 27017;
-	
+
 	private MongoClient mongoClient;
-	private DBCollection collection; 
+	private DBCollection collection;
 
 	/*
 	 * (non-Javadoc)
@@ -25,9 +25,9 @@ public class MongoDBDAO implements DatabaseDAO {
 	 * @see com.igz.performance.database.DatabaseDAO#init()
 	 */
 	public void init() {
-		
+
 		try {
-			mongoClient = new MongoClient( HOST , PORT );
+			mongoClient = new MongoClient(HOST, PORT);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 			return;
@@ -56,8 +56,8 @@ public class MongoDBDAO implements DatabaseDAO {
 	 */
 	public int select(String id) {
 
-       	DBObject found = collection.findOne(new BasicDBObject().append("_id", id));
-       	if(found == null) {
+		DBObject found = collection.findOne(new BasicDBObject().append("_id", id));
+		if (found == null) {
 			System.err.println("RESULT NOT FOUND LOOKING BY ID:" + id);
 		}
 
@@ -81,5 +81,14 @@ public class MongoDBDAO implements DatabaseDAO {
 	public int count() {
 		long count = collection.count();
 		return Long.valueOf(count).intValue();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.igz.performance.database.DatabaseDAO#close()
+	 */
+	public void close() throws Throwable {
+		mongoClient.close();
 	}
 }
