@@ -92,11 +92,11 @@
 			<artifactId>mongodb-async-driver</artifactId>
 			<version>1.2.0</version>
 		</dependency>
-		<!-- elastic search -->		
+		<!-- rabbitmq client -->		
 		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-			<version>0.19.8</version>
+			<groupId>com.rabbitmq</groupId>
+			<artifactId>amqp-client</artifactId>
+			<version>3.0.4</version>
 		</dependency> 
             		
 	</dependencies>
