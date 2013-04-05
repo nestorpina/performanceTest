@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import com.igz.performance.queues.RabbitMQTest.OperationType;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
 
 public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>> {
@@ -17,6 +16,7 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 	private String name;
 	private int numberOfRequests;
 	private OperationType operation;
+	private String json;
 	private Channel channel;
 	private List<Object> idsToSelect;
 
@@ -42,29 +42,38 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 		this.operation = operation;
 	}
 
-	public List<String> call() throws IOException {
+	public String getJson() {
+		return json;
+	}
+
+	public void setJson(String json) {
+		this.json = json;
+	}
+
+	public List<String> call() {
 
 		List<String> ids = new ArrayList<String>();
 
-		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost(HOST);
-		Connection connection;
-		connection = factory.newConnection();
-		channel = connection.createChannel();
+		try {
+			connection = getConnection();
+			channel = connection.createChannel();
 
-		channel.queueDeclare(queue_name, QUEUE_CONFIG_DURABLE, QUEUE_CONFIG_EXCLUSIVE, QUEUE_CONFIG_AUTODELETE, null);
+			channel.queueDeclare(queue_name, QUEUE_CONFIG_DURABLE, QUEUE_CONFIG_EXCLUSIVE, QUEUE_CONFIG_AUTODELETE, null);
 
-		if (operation == OperationType.INSERT) {
-			ids = sendInserts();
-		} else if (operation == OperationType.SELECT) {
-			ids = sendSelects();
+			if (operation == OperationType.INSERT) {
+				ids = sendInserts();
+			} else if (operation == OperationType.SELECT) {
+				ids = sendSelects();
+			}
+
+			channel.close();
+			connection.close();
+
+			return ids;
+		} catch (Throwable ex) {
+			ex.printStackTrace();
 		}
-
-		channel.close();
-		connection.close();
-
 		return ids;
-
 	}
 
 	private List<String> sendSelects() throws IOException {
@@ -72,7 +81,7 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 		for (Object id : idsToSelect) {
 			String message = operation + SEPARATOR + id;
 			channel.basicPublish("", queue_name, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
-			if(debug) {
+			if (debug) {
 				System.out.println(" [" + name + "] Sent '" + message + "'");
 			}
 		}
@@ -84,10 +93,10 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 		for (int i = 0; i < numberOfRequests; i++) {
 			String id = UUID.randomUUID().toString();
 			ids.add(id);
-			String message = operation + SEPARATOR + id;
+			String message = operation + SEPARATOR + id + SEPARATOR + json;
 			channel.basicPublish("", queue_name, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
-			if(debug) {
-				System.out.println(" [" + name + "] Sent '" + message + "'");
+			if (debug) {
+				System.out.println(" [" + name + "] Sent '" + message.substring(0, 80) + "'" + (message.length() > 100 ? "..." : ""));
 			}
 		}
 		return ids;

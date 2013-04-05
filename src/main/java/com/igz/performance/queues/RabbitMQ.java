@@ -20,7 +20,7 @@ public class RabbitMQ {
 
 	protected boolean debug = false;
 
-	private Connection connection;
+	protected Connection connection;
 
 	public RabbitMQ() {
 	}
@@ -32,9 +32,9 @@ public class RabbitMQ {
 	public int getPendingMessages() {
 
 		int messageCount = -1;
-
+		Channel channel = null;
 		try {
-			Channel channel = getConnection().createChannel();
+			channel = getConnection().createChannel();
 
 			DeclareOk queueDeclare = channel.queueDeclare(queue_name, QUEUE_CONFIG_DURABLE, QUEUE_CONFIG_EXCLUSIVE,
 					QUEUE_CONFIG_AUTODELETE, null);
@@ -42,8 +42,26 @@ public class RabbitMQ {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return messageCount;
+	}
+	
+	public void  deleteQueue() {
+		if(debug) {
+			System.out.println("Deleting queue: " + queue_name);
+		}
+		Channel channel = null;
+		try {
+			channel = getConnection().createChannel();
+			channel.queueDelete(queue_name);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				channel.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public boolean isDebug() {
@@ -54,8 +72,8 @@ public class RabbitMQ {
 		this.debug = debug;
 	}
 
-	private Connection getConnection() throws IOException {
-		if (connection == null) {
+	protected Connection getConnection() throws IOException {
+		if (connection == null || !connection.isOpen()) {
 			ConnectionFactory factory = new ConnectionFactory();
 			factory.setHost(HOST);
 			connection = factory.newConnection();
