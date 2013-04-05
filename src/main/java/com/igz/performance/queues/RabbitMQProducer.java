@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 import com.igz.performance.queues.RabbitMQTest.OperationType;
 import com.rabbitmq.client.Channel;
@@ -18,7 +17,7 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 	private OperationType operation;
 	private String json;
 	private Channel channel;
-	private List<Object> idsToSelect;
+	private List<String> idsToSelect;
 
 	public RabbitMQProducer(String name, String queue_name, int numberOfRequests) {
 		this.name = name;
@@ -26,11 +25,11 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 		this.numberOfRequests = numberOfRequests;
 	}
 
-	public List<Object> getIdsToSelect() {
+	public List<String> getIdsToSelect() {
 		return idsToSelect;
 	}
 
-	public void setIdsToSelect(List<Object> idsToSelect) {
+	public void setIdsToSelect(List<String> idsToSelect) {
 		this.idsToSelect = idsToSelect;
 	}
 
