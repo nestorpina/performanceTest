@@ -2,6 +2,8 @@ package com.igz.performance.database;
 
 import java.net.UnknownHostException;
 
+import org.apache.commons.lang.time.StopWatch;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -18,6 +20,9 @@ public class MongoDBDAO implements DatabaseDAO {
 
 	private MongoClient mongoClient;
 	private DBCollection collection;
+	
+	private long timeInsert = 0;
+	private long timeParse = 0;
 
 	/*
 	 * (non-Javadoc)
@@ -43,9 +48,18 @@ public class MongoDBDAO implements DatabaseDAO {
 	 */
 	public String insert(String id, String json) {
 		// We ignore the id in mongo and let mongo use its internal id generator
+		StopWatch parseTimer = new StopWatch();
+		parseTimer.start();
 		DBObject object = (DBObject) JSON.parse(json);
 		object.put("_id", id);
+		parseTimer.suspend();
+		StopWatch insertTimer = new StopWatch();
+		insertTimer.start();
 		collection.insert(object);
+		insertTimer.suspend();
+//		System.out.println(String.format("time to parse/insert/%%parse: %s / %s / %.0f%%", sw,sw2,(sw.getTime()*1.0/(sw.getTime()+sw2.getTime())*1.0)*100));
+		timeInsert += parseTimer.getTime();
+		timeParse += insertTimer.getTime();
 		return id;
 	}
 
@@ -90,5 +104,6 @@ public class MongoDBDAO implements DatabaseDAO {
 	 */
 	public void close() throws Throwable {
 		mongoClient.close();
+//		System.out.println(String.format("TOTAL time to parse/insert/%%parse: %s / %s / %.0f%%", timeParse,timeInsert,timeParse*100.0/(timeParse+timeInsert)*1.0));
 	}
 }
