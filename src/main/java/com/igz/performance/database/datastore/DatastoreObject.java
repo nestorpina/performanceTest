@@ -1,4 +1,4 @@
-package com.igz.performance.datastore;
+package com.igz.performance.database.datastore;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;

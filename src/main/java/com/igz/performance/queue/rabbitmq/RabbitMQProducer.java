@@ -1,4 +1,4 @@
-package com.igz.performance.queues;
+package com.igz.performance.queue.rabbitmq;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
-import com.igz.performance.queues.RabbitMQTest.OperationType;
+import com.igz.performance.queue.Producer;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.MessageProperties;
 
-public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>> {
+public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>, Producer {
 
 	private String name;
 	private int numberOfRequests;
@@ -29,14 +29,23 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 		return idsToSelect;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.igz.performance.queues.Producer#setIdsToSelect(java.util.List)
+	 */
 	public void setIdsToSelect(List<String> idsToSelect) {
 		this.idsToSelect = idsToSelect;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.igz.performance.queues.Producer#getOperation()
+	 */
 	public OperationType getOperation() {
 		return operation;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.igz.performance.queues.Producer#setOperation(com.igz.performance.queues.RabbitMQ.OperationType)
+	 */
 	public void setOperation(OperationType operation) {
 		this.operation = operation;
 	}
@@ -45,10 +54,16 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 		return json;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.igz.performance.queues.Producer#setJson(java.lang.String)
+	 */
 	public void setJson(String json) {
 		this.json = json;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.igz.performance.queues.Producer#call()
+	 */
 	public List<String> call() {
 
 		List<String> ids = new ArrayList<String>();

@@ -1,4 +1,4 @@
-package com.igz.performance.queues;
+package com.igz.performance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,14 @@ import org.apache.commons.lang.time.StopWatch;
 
 import com.igz.performance.database.DatabaseDAO;
 import com.igz.performance.database.MysqlDAO;
+import com.igz.performance.queue.Consumer;
+import com.igz.performance.queue.Producer;
+import com.igz.performance.queue.Queue;
+import com.igz.performance.queue.rabbitmq.RabbitMQ;
+import com.igz.performance.queue.rabbitmq.RabbitMQConsumer;
+import com.igz.performance.queue.rabbitmq.RabbitMQProducer;
+import com.igz.performance.queue.rabbitmq.RabbitMQ.OperationType;
+
 
 /**
  * Performance testing of INSERTS and SELECTS of a json in different Databases, and using differente queue systems
@@ -19,7 +27,7 @@ import com.igz.performance.database.MysqlDAO;
  * @author npina
  *
  */
-public class RabbitMQTest {
+public class PerformanceTest {
 
 	public static boolean debug = false;
 
@@ -30,17 +38,23 @@ public class RabbitMQTest {
 	private final static int PRODUCER_COUNT = 1;
 	private final static int ITEMS = 50000;
 
-	public enum OperationType {
-		INSERT, SELECT
-	}
-
 	private static DatabaseDAO getDatabaseDAO() {
 		return new MysqlDAO();
+	}
+	
+	private static Producer getProducer(int requestPerProducer, int i) {
+		Producer producer = new RabbitMQProducer("P" + i, QUEUE_NAME, requestPerProducer);
+		return producer;
+	}
+
+	private static Consumer getConsumer(int i) {
+		Consumer consumer = new RabbitMQConsumer("C" + i, QUEUE_NAME, getDatabaseDAO());
+		return consumer;
 	}
 
 	public static void main(String[] args) {
 
-		ArrayList<RabbitMQConsumer> consumers = null;
+		ArrayList<Consumer> consumers = null;
 		DatabaseDAO dao = null;
 		try {
 
@@ -175,7 +189,7 @@ public class RabbitMQTest {
 		int requestPerProducer = ITEMS / PRODUCER_COUNT;
 
 		for (int i = 0; i < PRODUCER_COUNT; i++) {
-			RabbitMQProducer producer = new RabbitMQProducer("P" + i, QUEUE_NAME, requestPerProducer);
+			Producer producer = getProducer(requestPerProducer, i);
 			producer.setOperation(operation);
 			producer.setDebug(debug);
 			if (operation == OperationType.INSERT) {
@@ -194,10 +208,10 @@ public class RabbitMQTest {
 	 * 
 	 * @return
 	 */
-	private static ArrayList<RabbitMQConsumer> startConsumers() {
-		ArrayList<RabbitMQConsumer> consumers = new ArrayList<RabbitMQConsumer>();
+	private static ArrayList<Consumer> startConsumers() {
+		ArrayList<Consumer> consumers = new ArrayList<Consumer>();
 		for (int i = 0; i < CONSUMER_COUNT; i++) {
-			RabbitMQConsumer consumer = new RabbitMQConsumer("C" + i, QUEUE_NAME, getDatabaseDAO());
+			Consumer consumer = getConsumer(i);
 			consumer.setDebug(debug);
 			Thread thread = new Thread(consumer);
 			thread.start();
@@ -205,6 +219,7 @@ public class RabbitMQTest {
 		}
 		return consumers;
 	}
+
 
 	/**
 	 * Create Database conection and cleans table/collection
@@ -223,12 +238,12 @@ public class RabbitMQTest {
 	 * @param consumers
 	 * @param dao
 	 */
-	private static void cleanAndcloseDBConnections(ArrayList<RabbitMQConsumer> consumers, DatabaseDAO dao) {
+	private static void cleanAndcloseDBConnections(ArrayList<Consumer> consumers, DatabaseDAO dao) {
 		try {
 			// Clean database and close connections
 			dao.removeAll();
 			dao.close();
-			for (RabbitMQConsumer consumer : consumers) {
+			for (Consumer consumer : consumers) {
 				consumer.getDao().close();
 			}
 		} catch (Throwable e) {
@@ -256,7 +271,7 @@ public class RabbitMQTest {
 	 */
 	private static void deleteQueue() {
 		try {
-			RabbitMQ rabbitMQ = new RabbitMQ(QUEUE_NAME);
+			Queue rabbitMQ = new RabbitMQ(QUEUE_NAME);
 			rabbitMQ.setDebug(debug);
 			rabbitMQ.deleteQueue();
 		} catch (Throwable e) {
@@ -272,7 +287,7 @@ public class RabbitMQTest {
 	 * @throws InterruptedException
 	 */
 	private static void waitUntilEmptyQueue() throws InterruptedException {
-		RabbitMQ rabbitMQ = new RabbitMQ(QUEUE_NAME);
+		Queue rabbitMQ = new RabbitMQ(QUEUE_NAME);
 		rabbitMQ.setDebug(debug);
 		int pendingMessages = -1;
 		while (pendingMessages != 0) {

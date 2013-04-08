@@ -26,7 +26,7 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
-import com.igz.performance.datastore.DatastoreObject;
+import com.igz.performance.database.datastore.DatastoreObject;
 import com.izg.test.tasks.DatastoreReadTask;
 
 /**

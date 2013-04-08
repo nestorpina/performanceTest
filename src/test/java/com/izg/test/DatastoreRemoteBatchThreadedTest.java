@@ -21,7 +21,7 @@ import org.junit.AfterClass;
 
 import com.google.gson.Gson;
 import com.googlecode.objectify.ObjectifyService;
-import com.igz.performance.datastore.DatastoreObject;
+import com.igz.performance.database.datastore.DatastoreObject;
 import com.izg.test.json.JsonResponse2;
 
 /**

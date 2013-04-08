@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
 
 import org.junit.Assert;
 
-import com.igz.performance.datastore.DatastoreObject;
+import com.igz.performance.database.datastore.DatastoreObject;
 
 public class DatastoreReadTask implements Callable<Integer> {
 	private final List<String> list;

@@ -1,13 +1,18 @@
-package com.igz.performance.queues;
+package com.igz.performance.queue.rabbitmq;
 
 import java.io.IOException;
 
+import com.igz.performance.queue.Queue;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.AMQP.Queue.DeclareOk;
 
-public class RabbitMQ {
+public class RabbitMQ implements Queue {
+
+	public enum OperationType {
+		INSERT, SELECT
+	}
 
 	protected static final String HOST = "localhost";
 	protected static final String SEPARATOR = "|";
@@ -29,6 +34,9 @@ public class RabbitMQ {
 		this.queue_name = queue_name;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.igz.performance.queues.Queue#getPendingMessages()
+	 */
 	public int getPendingMessages() {
 
 		int messageCount = -1;
@@ -44,9 +52,12 @@ public class RabbitMQ {
 		}
 		return messageCount;
 	}
-	
-	public void  deleteQueue() {
-		if(debug) {
+
+	/* (non-Javadoc)
+	 * @see com.igz.performance.queues.Queue#deleteQueue()
+	 */
+	public void deleteQueue() {
+		if (debug) {
 			System.out.println("Deleting queue: " + queue_name);
 		}
 		Channel channel = null;
@@ -64,10 +75,16 @@ public class RabbitMQ {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.igz.performance.queues.Queue#isDebug()
+	 */
 	public boolean isDebug() {
 		return debug;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.igz.performance.queues.Queue#setDebug(boolean)
+	 */
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}

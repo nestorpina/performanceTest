@@ -1,15 +1,15 @@
-package com.igz.performance.queues;
+package com.igz.performance.queue.rabbitmq;
 
 import java.io.IOException;
 
 import com.igz.performance.database.DatabaseDAO;
-import com.igz.performance.queues.RabbitMQTest.OperationType;
+import com.igz.performance.queue.Consumer;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.ShutdownSignalException;
 
-public class RabbitMQConsumer extends RabbitMQ implements Runnable {
+public class RabbitMQConsumer extends RabbitMQ implements Consumer {
 
 	private static final int PREFETCH_COUNT = 1;
 	private String name;
@@ -23,14 +23,23 @@ public class RabbitMQConsumer extends RabbitMQ implements Runnable {
 		dao.init();
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.igz.performance.queues.Consumer#getDao()
+	 */
 	public DatabaseDAO getDao() {
 		return dao;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.igz.performance.queues.Consumer#setDao(com.igz.performance.database.DatabaseDAO)
+	 */
 	public void setDao(DatabaseDAO dao) {
 		this.dao = dao;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.igz.performance.queues.Consumer#run()
+	 */
 	public void run() {
 
 		Channel channel = null;
