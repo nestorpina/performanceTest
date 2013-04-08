@@ -57,13 +57,11 @@ public class MysqlDAO implements DatabaseDAO {
 		PreparedStatement preparedStatement = null;
 		ArrayList<String> result = new ArrayList<String>();
 		try {
-			// TODO : If we retrieve all the object (not only the id) we got a memory exception
 			preparedStatement = conn.prepareStatement("SELECT * FROM testtable WHERE id = ?");
-
 			preparedStatement.setString(1, (String) id);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-				result.add("" /* resultSet.getString("json") */);
+				result.add(resultSet.getString("json"));
 			}
 			resultSet.close();
 
