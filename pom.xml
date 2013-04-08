@@ -98,6 +98,12 @@
 			<artifactId>amqp-client</artifactId>
 			<version>3.0.4</version>
 		</dependency> 
+		<!-- zero mq java bindings -->		
+		<dependency>
+			<groupId>org.zeromq</groupId>
+			<artifactId>jzmq</artifactId>
+			<version>2.1.2</version>
+		</dependency> 		
             		
 	</dependencies>
 
