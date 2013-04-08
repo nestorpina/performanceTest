@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
-import com.igz.performance.queue.Producer;
+import org.apache.commons.lang.StringUtils;
+
+import com.igz.performance.queue.interfaces.Producer;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.MessageProperties;
 
@@ -16,12 +18,13 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 	private int numberOfRequests;
 	private OperationType operation;
 	private String json;
-	private Channel channel;
 	private List<String> idsToSelect;
 
-	public RabbitMQProducer(String name, String queue_name, int numberOfRequests) {
+	private Channel channel;
+	
+	public RabbitMQProducer(String name, String queueName, int numberOfRequests) {
+		super(queueName);
 		this.name = name;
-		this.queue_name = queue_name;
 		this.numberOfRequests = numberOfRequests;
 	}
 
@@ -72,7 +75,7 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 			connection = getConnection();
 			channel = connection.createChannel();
 
-			channel.queueDeclare(queue_name, QUEUE_CONFIG_DURABLE, QUEUE_CONFIG_EXCLUSIVE, QUEUE_CONFIG_AUTODELETE, null);
+			channel.queueDeclare(queueName, QUEUE_CONFIG_DURABLE, QUEUE_CONFIG_EXCLUSIVE, QUEUE_CONFIG_AUTODELETE, null);
 
 			if (operation == OperationType.INSERT) {
 				ids = sendInserts();
@@ -94,7 +97,7 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 		List<String> ids = new ArrayList<String>();
 		for (Object id : idsToSelect) {
 			String message = operation + SEPARATOR + id;
-			channel.basicPublish("", queue_name, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
+			channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
 			if (debug) {
 				System.out.println(" [" + name + "] Sent '" + message + "'");
 			}
@@ -108,9 +111,9 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 			String id = UUID.randomUUID().toString();
 			ids.add(id);
 			String message = operation + SEPARATOR + id + SEPARATOR + json;
-			channel.basicPublish("", queue_name, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
+			channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
 			if (debug) {
-				System.out.println(" [" + name + "] Sent '" + message.substring(0, 80) + "'" + (message.length() > 100 ? "..." : ""));
+				System.out.println(" [" + name + "] Sent '" + StringUtils.abbreviate(message, 100) + "'");
 			}
 		}
 		return ids;

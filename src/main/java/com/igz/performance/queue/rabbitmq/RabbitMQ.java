@@ -2,36 +2,23 @@ package com.igz.performance.queue.rabbitmq;
 
 import java.io.IOException;
 
-import com.igz.performance.queue.Queue;
+import com.igz.performance.queue.AbstractQueue;
+import com.igz.performance.queue.interfaces.Queue;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.AMQP.Queue.DeclareOk;
 
-public class RabbitMQ implements Queue {
-
-	public enum OperationType {
-		INSERT, SELECT
-	}
-
-	protected static final String HOST = "localhost";
-	protected static final String SEPARATOR = "|";
+public class RabbitMQ extends AbstractQueue implements Queue {
 
 	protected static final boolean QUEUE_CONFIG_DURABLE = true;
 	protected static final boolean QUEUE_CONFIG_EXCLUSIVE = false;
 	protected static final boolean QUEUE_CONFIG_AUTODELETE = false;
 
-	protected String queue_name;
-
-	protected boolean debug = false;
-
 	protected Connection connection;
 
-	public RabbitMQ() {
-	}
-
-	public RabbitMQ(String queue_name) {
-		this.queue_name = queue_name;
+	public RabbitMQ(String queueName) {
+		super(queueName);
 	}
 
 	/* (non-Javadoc)
@@ -44,7 +31,7 @@ public class RabbitMQ implements Queue {
 		try {
 			channel = getConnection().createChannel();
 
-			DeclareOk queueDeclare = channel.queueDeclare(queue_name, QUEUE_CONFIG_DURABLE, QUEUE_CONFIG_EXCLUSIVE,
+			DeclareOk queueDeclare = channel.queueDeclare(queueName, QUEUE_CONFIG_DURABLE, QUEUE_CONFIG_EXCLUSIVE,
 					QUEUE_CONFIG_AUTODELETE, null);
 			messageCount = queueDeclare.getMessageCount();
 		} catch (IOException e) {
@@ -58,12 +45,12 @@ public class RabbitMQ implements Queue {
 	 */
 	public void deleteQueue() {
 		if (debug) {
-			System.out.println("Deleting queue: " + queue_name);
+			System.out.println("Deleting queue: " + queueName);
 		}
 		Channel channel = null;
 		try {
 			channel = getConnection().createChannel();
-			channel.queueDelete(queue_name);
+			channel.queueDelete(queueName);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -73,20 +60,6 @@ public class RabbitMQ implements Queue {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see com.igz.performance.queues.Queue#isDebug()
-	 */
-	public boolean isDebug() {
-		return debug;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.igz.performance.queues.Queue#setDebug(boolean)
-	 */
-	public void setDebug(boolean debug) {
-		this.debug = debug;
 	}
 
 	protected Connection getConnection() throws IOException {

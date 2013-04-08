@@ -3,7 +3,7 @@ package com.igz.performance.queue.rabbitmq;
 import java.io.IOException;
 
 import com.igz.performance.database.DatabaseDAO;
-import com.igz.performance.queue.Consumer;
+import com.igz.performance.queue.interfaces.Consumer;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.QueueingConsumer;
@@ -15,9 +15,9 @@ public class RabbitMQConsumer extends RabbitMQ implements Consumer {
 	private String name;
 	private DatabaseDAO dao;
 
-	public RabbitMQConsumer(String name, String queue_name, DatabaseDAO dao) {
+	public RabbitMQConsumer(String name, String queueName, DatabaseDAO dao) {
+		super(queueName);
 		this.name = name;
-		this.queue_name = queue_name;
 		this.dao = dao;
 
 		dao.init();
@@ -48,7 +48,7 @@ public class RabbitMQConsumer extends RabbitMQ implements Consumer {
 			connection = getConnection();
 			channel = connection.createChannel();
 
-			channel.queueDeclare(queue_name, QUEUE_CONFIG_DURABLE, QUEUE_CONFIG_EXCLUSIVE, QUEUE_CONFIG_AUTODELETE, null);
+			channel.queueDeclare(queueName, QUEUE_CONFIG_DURABLE, QUEUE_CONFIG_EXCLUSIVE, QUEUE_CONFIG_AUTODELETE, null);
 			channel.basicQos(PREFETCH_COUNT);
 
 			if (debug) {
@@ -56,7 +56,7 @@ public class RabbitMQConsumer extends RabbitMQ implements Consumer {
 			}
 
 			QueueingConsumer consumer = new QueueingConsumer(channel);
-			channel.basicConsume(queue_name, false, consumer);
+			channel.basicConsume(queueName, false, consumer);
 
 			while (true) {
 				QueueingConsumer.Delivery delivery = consumer.nextDelivery();
@@ -89,7 +89,7 @@ public class RabbitMQConsumer extends RabbitMQ implements Consumer {
 			e.printStackTrace();
 		} catch (ConsumerCancelledException e) {
 			if(debug) {
-				System.out.println(String.format("Queue [%s] deleted. Consumer [%s] cancelled.",queue_name,name));
+				System.out.println(String.format("Queue [%s] deleted. Consumer [%s] cancelled.",queueName,name));
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();

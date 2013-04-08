@@ -12,61 +12,76 @@ import org.apache.commons.lang.time.StopWatch;
 
 import com.igz.performance.database.DatabaseDAO;
 import com.igz.performance.database.MysqlDAO;
-import com.igz.performance.queue.Consumer;
-import com.igz.performance.queue.Producer;
-import com.igz.performance.queue.Queue;
-import com.igz.performance.queue.rabbitmq.RabbitMQ;
-import com.igz.performance.queue.rabbitmq.RabbitMQConsumer;
-import com.igz.performance.queue.rabbitmq.RabbitMQProducer;
-import com.igz.performance.queue.rabbitmq.RabbitMQ.OperationType;
-
+import com.igz.performance.queue.AbstractQueue.OperationType;
+import com.igz.performance.queue.interfaces.Consumer;
+import com.igz.performance.queue.interfaces.Producer;
+import com.igz.performance.queue.interfaces.Queue;
+import com.igz.performance.queue.zeromq.ZeroMQConsumer;
+import com.igz.performance.queue.zeromq.ZeroMQProducer;
+import com.igz.performance.queue.zeromq.ZeroMQResultsConsumer;
+import com.igz.performance.queue.zeromq.ZeroMq;
 
 /**
  * Performance testing of INSERTS and SELECTS of a json in different Databases, and using differente queue systems
  * 
  * @author npina
- *
+ * 
  */
 public class PerformanceTest {
 
 	public static boolean debug = false;
+
+	private static ZeroMQResultsConsumer resultsConsumer;
 
 	private final static String JSON = "{ 'LoadTime': 3, 'BackgroundImage': 'http://desprolamoderna.antena3.com/aplication/eIxlnfA8LPYl.png', 'DebugInfo': 1, 'RefreshInterval': 90, 'TimeTriggerMin': 150401, 'TimeTriggerMax': 150430, 'CodewordLatency': 10.08, 'ApplicationTitle': 'Prototipo Dev', 'facebookUrl': 'https:\\/\\/m.facebook.com', 'twitterUrl': 'https:\\/\\/m.twitter.com', 'Modules': [ { 'Id': 2, 'Name': 'Secciones', 'Programs': [ ] } , { 'Id': 3, 'Name': 'Participación', 'Contests': [ { 'Id': 20, 'Name': 'prueba concurso', 'Category': 'concurso', 'ImageIcon': 'http://desprolamoderna.antena3.com/contest/ZDH2Pg4P3F2t.png', 'ImageDetailed': 'http://desprolamoderna.antena3.com/contest/oezJ98JV1rLD.png', 'Description': 'oiuygiu yfguitfufguyg uigi ghu oiuygiu yfguitfufguyg uigi ghu oiuygiu yfguitfufguyg uigi ghu oiuygiu yfguitfufguyg uigi ghu', 'Url': 'http:\\/\\/www.google.es', 'Questions': [ { 'Id': 44, 'Question': '¿Tu compañia de seguros reinvierte gran parte de sus beneficios en ti?', 'Time': 24, 'Background': 'http://desprolamoderna.antena3.com/pregunta/4YvyekkXnEcn.png', 'Answers': [ { 'Id': 110, 'Text': 'No No No', 'Correct': 1 } , { 'Id': 111, 'Text': 'Si', 'Correct': 0 } ] } , { 'Id': 45, 'Question': '¿Pregunta de prueba 2?', 'Time': 35, 'Background': 'http://desprolamoderna.antena3.com/pregunta/CbhQEURIpe9J.png', 'Answers': [ { 'Id': 112, 'Text': 'rpta uno', 'Correct': 0 } , { 'Id': 113, 'Text': 'rpta dos', 'Correct': 0 } , { 'Id': 114, 'Text': 'rpta 3', 'Correct': 1 } ] } , { 'Id': 46, 'Question': '¿Cargará la imagen de la campaña?', 'Time': 50, 'Answers': [ { 'Id': 115, 'Text': 'Sí', 'Correct': 0 } , { 'Id': 116, 'Text': 'No', 'Correct': 0 } , { 'Id': 117, 'Text': 'Tal vez', 'Correct': 0 } ] } ] } ] } , { 'Id': 1, 'Name': 'Guardado' } ] , 'Campaigns' : [ { 'Id': 272, 'Name': 'prueba pregunta', 'Codewords': [150441,150442], 'Background': 'http://desprolamoderna.antena3.com/imagen/9vrL8gMdTdHx.png', 'BackgroundMD5': '172c1847902aee8137be53a9bfbe458', 'Events': [ { 'Id': 566, 'Name': 'pregunta mutua', 'Description': 'Esta es la descripcion de facebook', 'QuestionId': 44, 'Start': 11.0, 'End': 20.0, 'EventType': 9, 'FileTag': '', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0, 'AllowsSharing': 1 } , { 'Id': 567, 'Name': 'Lanza segunda pregunta', 'Description': 'pregunta dos', 'QuestionId': 45, 'Start': 25.0, 'End': 41.0, 'EventType': 9, 'FileTag': '', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0, 'AllowsSharing': 1 } , { 'Id': 568, 'Name': 'Tercera pregunta', 'Description': 'pregunta 3', 'QuestionId': 46, 'Start': 45.0, 'End': 59.0, 'EventType': 9, 'FileTag': '', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0, 'AllowsSharing': 1 } , { 'Id': -1, 'Name': 'Audio End', 'Start': 70.0, 'End': 170.0, 'EventType': 999, 'FileTag': '', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0 } ] } , { 'Id': 37, 'Name': 'demoAtrapa1millonCorta', 'Codewords': [150435,150436], 'Background': 'http://agm28.blob.core.windows.net/imagen/eceNhoG1Acsk.png', 'Events': [ { 'Id': 63, 'Name': 'Eleccion Tema Seres', 'Start': 36.0, 'End': 50.0, 'EventType': 1, 'FileTag': 'http://agm28.blob.core.windows.net/content/sry7UoXYeqiF.png', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0, 'AllowsSharing': 1 } , { 'Id': 64, 'Name': 'Resp1 ewoks', 'Start': 52.0, 'End': 54.0, 'EventType': 1, 'FileTag': 'http://agm28.blob.core.windows.net/content/9ph3YHqs2OFq.png', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0, 'AllowsSharing': 1 } , { 'Id': 65, 'Name': 'Resp 2 replicantes', 'Start': 56.0, 'End': 60.0, 'EventType': 1, 'FileTag': 'http://agm28.blob.core.windows.net/content/rYx8aspGR5b5.png', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0, 'AllowsSharing': 1 } , { 'Id': 66, 'Name': 'Resp3 transformers', 'Start': 62.0, 'End': 64.0, 'EventType': 1, 'FileTag': 'http://agm28.blob.core.windows.net/content/eV9HD4xwh8Eq.png', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0, 'AllowsSharing': 1 } , { 'Id': 67, 'Name': 'Resp4 avatares', 'Start': 65.0, 'End': 84.0, 'EventType': 1, 'FileTag': 'http://agm28.blob.core.windows.net/content/ppTong1SRzKd.png', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0, 'AllowsSharing': 1 } , { 'Id': 74, 'Name': 'Pregunta1imagen', 'Start': 86.0, 'End': 90.0, 'EventType': 1, 'FileTag': 'http://agm28.blob.core.windows.net/content/Hd7XREgeuOTQ.png', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0, 'AllowsSharing': 1 } , { 'Id': 69, 'Name': 'Pregunta1', 'QuestionId': 12, 'Start': 90.0, 'End': 224.0, 'EventType': 9, 'FileTag': '', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0, 'AllowsSharing': 1 } , { 'Id': 113, 'Name': ' videoImagenio', 'Start': 1500.0, 'End': 2500.0, 'EventType': 2, 'FileTag': 'http://agm28.blob.core.windows.net/content/fxAZPIpy4VMC.mp4', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0, 'AllowsSharing': 1 } , { 'Id': -1, 'Name': 'Audio End', 'Start': 254.0, 'End': 354.0, 'EventType': 999, 'FileTag': '', 'TextTag': '', 'LikeButton': 0, 'AskButton': 0 } ] } ] }";
 	private final static String QUEUE_NAME = "test_queue" + System.currentTimeMillis();
 
 	private final static int CONSUMER_COUNT = 10;
 	private final static int PRODUCER_COUNT = 1;
-	private final static int ITEMS = 50000;
+	private final static int ITEMS = 100000;
 
 	private static DatabaseDAO getDatabaseDAO() {
 		return new MysqlDAO();
 	}
-	
+
 	private static Producer getProducer(int requestPerProducer, int i) {
-		Producer producer = new RabbitMQProducer("P" + i, QUEUE_NAME, requestPerProducer);
+		Producer producer = new ZeroMQProducer("P" + i, QUEUE_NAME, requestPerProducer);
+		producer.setDebug(debug);
 		return producer;
 	}
 
 	private static Consumer getConsumer(int i) {
-		Consumer consumer = new RabbitMQConsumer("C" + i, QUEUE_NAME, getDatabaseDAO());
+		Consumer consumer = new ZeroMQConsumer("C" + i, QUEUE_NAME, getDatabaseDAO());
+		consumer.setDebug(debug);
 		return consumer;
+	}
+
+	private static Queue getQueue() {
+		Queue queue = new ZeroMq(QUEUE_NAME);
+		queue.setDebug(debug);
+		return queue;
 	}
 
 	public static void main(String[] args) {
 
 		ArrayList<Consumer> consumers = null;
 		DatabaseDAO dao = null;
+
 		try {
 
 			dao = connectAndCleanDB();
 
 			consumers = startConsumers();
 
-			Thread.sleep(1000); // Wait a little for consumers to become ready
+			Thread.sleep(3000); // Wait a little for consumers to become ready
 
 			ArrayList<Callable<List<String>>> producers = prepareProducersForInsert();
 
 			List<String> ids = testInserts(producers, dao);
+
+			if(resultsConsumer!=null) {
+				ZeroMQResultsConsumer.setProcessedResults(0);
+			}
 
 			producers = prepareProducersForSelect(ids);
 
@@ -121,15 +136,35 @@ public class PerformanceTest {
 		List<String> ids = executeInThreads(producers);
 
 		waitUntilEmptyQueue();
+		int completedInserts = waitUntilAllItemsInserted(dao);
 		stopwatch.suspend();
 
-		int count = checkInsertedCount(dao);
-
-		System.out.println(String.format("Inserted %d (%d producers / %d consumers) in %s", count, PRODUCER_COUNT, CONSUMER_COUNT,
-				stopwatch));
+		System.out.println(String.format("Inserted %d (%d producers / %d consumers) in %s", completedInserts, PRODUCER_COUNT,
+				CONSUMER_COUNT, stopwatch));
 
 		return ids;
 
+	}
+
+	/**
+	 * Blocking method, doing a count on the database each 100ms until all the inserts are executed
+	 * 
+	 * @throws InterruptedException
+	 * @return number of inserts (items found on db)
+	 */
+	private static int waitUntilAllItemsInserted(DatabaseDAO dao) throws InterruptedException {
+		int completedInserts = dao.count();
+		int i = 0;
+		while (completedInserts < ITEMS) {
+			Thread.sleep(100);
+			completedInserts = dao.count();
+			// We print status each 100ms in debug, but also each 1sec even without debug
+			if(debug || i%10==0) {
+				System.out.println(String.format("%dms,Completed inserts: %d/%d", i*100,completedInserts, ITEMS));
+			}
+			i++;
+		}
+		return completedInserts;
 	}
 
 	/**
@@ -155,9 +190,8 @@ public class PerformanceTest {
 		return ids;
 	}
 
-
 	/**
-	 * Prepare producers that will send INSERT operations to the queue 
+	 * Prepare producers that will send INSERT operations to the queue
 	 * 
 	 * @return
 	 */
@@ -166,8 +200,7 @@ public class PerformanceTest {
 	}
 
 	/**
-	 * Prepare producers that will send SELECT operations to the queue
-	 * for each id on ids list
+	 * Prepare producers that will send SELECT operations to the queue for each id on ids list
 	 * 
 	 * @param ids
 	 * @return
@@ -184,14 +217,13 @@ public class PerformanceTest {
 	 * @return
 	 */
 	private static ArrayList<Callable<List<String>>> prepareProducers(OperationType operation, List<String> ids) {
-		
+
 		ArrayList<Callable<List<String>>> producers = new ArrayList<Callable<List<String>>>();
 		int requestPerProducer = ITEMS / PRODUCER_COUNT;
 
 		for (int i = 0; i < PRODUCER_COUNT; i++) {
 			Producer producer = getProducer(requestPerProducer, i);
 			producer.setOperation(operation);
-			producer.setDebug(debug);
 			if (operation == OperationType.INSERT) {
 				producer.setJson(JSON);
 			} else if (operation == OperationType.SELECT) {
@@ -212,14 +244,21 @@ public class PerformanceTest {
 		ArrayList<Consumer> consumers = new ArrayList<Consumer>();
 		for (int i = 0; i < CONSUMER_COUNT; i++) {
 			Consumer consumer = getConsumer(i);
-			consumer.setDebug(debug);
 			Thread thread = new Thread(consumer);
 			thread.start();
 			consumers.add(consumer);
 		}
+		// For ZeroMQ we need a Result consumer, in order to know when all the consumers have finished
+		// http://zguide.zeromq.org/page:all#Divide-and-Conquer
+		Queue queue = getQueue();
+		if(queue instanceof ZeroMq) {
+			resultsConsumer = new ZeroMQResultsConsumer(ITEMS);
+			Thread thread = new Thread(resultsConsumer);
+			resultsConsumer.setDebug(debug);
+			thread.start();
+		}
 		return consumers;
 	}
-
 
 	/**
 	 * Create Database conection and cleans table/collection
@@ -235,6 +274,7 @@ public class PerformanceTest {
 
 	/**
 	 * Remove all items inserted in the database and close all conectios
+	 * 
 	 * @param consumers
 	 * @param dao
 	 */
@@ -252,28 +292,12 @@ public class PerformanceTest {
 	}
 
 	/**
-	 * Checks if inserted items in the database coincide with expected items
-	 * it will print in STDERR the found items if they don't match
-	 * 
-	 * @param dao
-	 * @return
-	 */
-	private static int checkInsertedCount(DatabaseDAO dao) {
-		int count = dao.count();
-		if (count != ITEMS) {
-			System.err.println("ERROR: expected " + ITEMS + ", found " + count);
-		}
-		return count;
-	}
-
-	/**
 	 * Deletes the queue we were using for tests
 	 */
 	private static void deleteQueue() {
 		try {
-			Queue rabbitMQ = new RabbitMQ(QUEUE_NAME);
-			rabbitMQ.setDebug(debug);
-			rabbitMQ.deleteQueue();
+			Queue queue = getQueue();
+			queue.deleteQueue();
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -282,19 +306,16 @@ public class PerformanceTest {
 	/**
 	 * Blocking method, polling queue each 10ms until queue is empty
 	 * 
-	 * TODO: Maybe there are messages being processed even when the queue is empty. How do we check that?
-	 * 
 	 * @throws InterruptedException
 	 */
 	private static void waitUntilEmptyQueue() throws InterruptedException {
-		Queue rabbitMQ = new RabbitMQ(QUEUE_NAME);
-		rabbitMQ.setDebug(debug);
-		int pendingMessages = -1;
-		while (pendingMessages != 0) {
+		Queue queue = getQueue();
+		int pendingMessages = queue.getPendingMessages();
+		while (pendingMessages > 0) {
 			Thread.sleep(10);
-			pendingMessages = rabbitMQ.getPendingMessages();
+			pendingMessages = queue.getPendingMessages();
 			if (debug) {
-				System.out.println("Pending: " + pendingMessages);
+				System.out.println("Pending messages: " + pendingMessages);
 			}
 		}
 	}
