@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang.time.StopWatch;
 
 import com.igz.performance.database.DatabaseDAO;
@@ -67,7 +68,11 @@ public class PerformanceTest {
 		;
 		
 		OptionsParser optionsParser = new OptionsParser();
-		options = optionsParser.parseCommandLineOptions(args);
+		try {
+			options = optionsParser.parseCommandLineOptions(args);
+		} catch (ParseException e1) {
+			System.exit(0);
+		}
 		if(options.showHelp()) {
 			optionsParser.printHelp();
 			System.exit(0);

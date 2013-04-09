@@ -1,8 +1,8 @@
 package com.igz.performance;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
@@ -21,16 +21,16 @@ public class OptionsParser {
 	private static final String QUEUE = "queue";
 	private static final String DATABASE = "database";
 	
-	private static final String DEFAULT_NUM_EVENTS = "500";
+	private static final String DEFAULT_NUM_EVENTS = "50000";
 	private static final String DEFAULT_WORKERS = "10";
 	private static final String DEFAULT_QUEUE = "NONE";
 	private static final String DEFAULT_DATABASE = "MYSQL";
 	
 	CommandLine parsedOptions = null;
 
-	public com.igz.performance.Options parseCommandLineOptions(String[] args) {
+	public com.igz.performance.Options parseCommandLineOptions(String[] args) throws ParseException {
 		Options options = createOptions();
-		CommandLineParser parser = new BasicParser();
+		CommandLineParser parser = new GnuParser();
 		
 		try {
 			parsedOptions = parser.parse( options, args);
@@ -38,6 +38,7 @@ public class OptionsParser {
 				System.out.println(e1.getMessage());
 				System.out.println();
 				printHelp();
+				throw e1;
 		}
 		
 		com.igz.performance.Options igzOptions = buildOptions(parsedOptions);
@@ -46,6 +47,11 @@ public class OptionsParser {
 
 	@SuppressWarnings("static-access")
 	private Options createOptions() {
+		Option javaArgs  = OptionBuilder.withArgName( "property=value" )
+                .hasArgs(2)
+                .withValueSeparator()
+                .withDescription( "use value for given property (jvm arguments)" )
+                .create( "D" );
 		Option count  = OptionBuilder.withArgName( "N" )
 	            .hasArg()
 	            .withDescription(  "N: number of events (insert/select operations) to do " )
@@ -59,11 +65,11 @@ public class OptionsParser {
 	            .create( WORKERS );
 		Option queue = OptionBuilder.withArgName( "QUEUE" )
 	            .hasArg()
-	            .withDescription(  "set the QUEUE system to use, valid values : [rabbitmq, zeromq] or leave empty to don't use a queue system" )
+	            .withDescription(  "set the QUEUE system to use, valid values : [RABBITMQ, ZEROMQ (default)] or leave empty to don't use a queue system" )
 	            .create( QUEUE );
 		Option database = OptionBuilder.withArgName( "DATABASE" )
 	            .hasArg()
-	            .withDescription(  "set the DATABASE system to use, valid values : [mysql, mongodb, redis, sqlserver]" )
+	            .withDescription(  "set the DATABASE system to use, valid values : [MYSQL, MONGODB, REDIS (default), SQLSERVER]" )
 	            .withType(DatabaseType.class)
 	            .create( DATABASE );
 		Option usage = OptionBuilder
@@ -78,6 +84,7 @@ public class OptionsParser {
 		options.addOption(database);
 		options.addOption(debug);
 		options.addOption(usage);
+		options.addOption(javaArgs);
 		return options;
 	}
 	
