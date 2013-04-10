@@ -14,8 +14,8 @@ public class DatabaseFactory {
 			return new MongoDBDAO();
 		case REDIS:
 			return new RedisDAO();
-//		case SQLSERVER:
-//			return new SQLSERVERMysqlDAO();
+		case SQLSERVER:
+			return new SqlServerDAO();
 		default:
 			return new MysqlDAO();
 		}
