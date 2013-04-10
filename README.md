@@ -27,6 +27,7 @@
 Using DATABASE: MYSQL, QUEUE: NONE, WORKERS: 10, EVENTS: 1000
 Inserted 1000 (10 producers) in 0:00:00.191
 Retrieved 1000 (10 producers) in 0:00:00.116
+```
 
 * Command line parameters
 ```
@@ -52,6 +53,7 @@ usage: java -Djava.library.path=/usr/local/lib -jar
 * MYSQL :
   * User to connect : root/<empty password>
   * You should have created the table 'testtable' on test schema :
+
 ```
  CREATE TABLE `test`.`testtable` (
   `id` VARCHAR(50)  NOT NULL,
@@ -60,13 +62,16 @@ usage: java -Djava.library.path=/usr/local/lib -jar
 )
 ENGINE = MyISAM;
 ```
+
 * SQLSERVER :
   * The test must be executed on a windows machine, with the user logged having rights to access sqlserver
   * You should have created the table 'testtable' on test schema :
+
 ```
 sqlcmd -E -Q "CREATE TABLE testtable ( id VARCHAR(50)  NOT NULL, json TEXT NOT NULL);"
 sqlcmd -E -Q "ALTER TABLE testtable ADD PRIMARY KEY (id)"
 ```
+
   * Before building : 
     * Download driver from : http://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=11774
     * Add to local repository : mvn install:install-file -Dfile=sqljdbc4.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
