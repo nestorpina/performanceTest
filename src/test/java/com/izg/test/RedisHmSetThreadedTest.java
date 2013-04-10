@@ -147,13 +147,13 @@ public class RedisHmSetThreadedTest {
 
 	}
 
-	@Test
+//	@Test
 	public void testInsert100000_10threads() throws InterruptedException,
 			ExecutionException {
 		testInsertAndRead(100000, 10, jsonSmall);
 	}
 
-	@Test
+//	@Test
 	public void testIsert50000_10threads() throws InterruptedException,
 			ExecutionException {
 		testInsertAndRead(50000, 10, jsonSmall);

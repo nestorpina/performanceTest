@@ -14,7 +14,6 @@ import java.util.concurrent.Future;
 import org.apache.commons.lang.time.StopWatch;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Test;
 
 import com.allanbank.mongodb.MongoClient;
 import com.allanbank.mongodb.MongoClientConfiguration;
@@ -128,12 +127,12 @@ public class MongoDBAsyncThreadedTest {
 
 	}
 
-  @Test
+//  @Test
   public void testInsert100000_10threads() throws InterruptedException, ExecutionException {
       testInsert(10, 1, jsonSmall);
   }
 
-  @Test
+//  @Test
   public void testInsert50000_10threads() throws InterruptedException, ExecutionException {
       testInsert(50000,10, jsonSmall);
   }

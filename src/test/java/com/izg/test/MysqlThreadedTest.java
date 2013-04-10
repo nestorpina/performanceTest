@@ -127,12 +127,12 @@ public class MysqlThreadedTest {
 
 	}
 
-  @Test
+//  @Test
   public void testInsert100000_10threads() throws InterruptedException, ExecutionException, ClassNotFoundException, SQLException {
       testInsert(100000, 10, jsonSmall);
   }
 
-  @Test
+//  @Test
   public void testIsert50000_10threads() throws InterruptedException, ExecutionException, ClassNotFoundException, SQLException {
       testInsert(50000,10, jsonSmall);
   }

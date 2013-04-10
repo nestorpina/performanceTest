@@ -18,7 +18,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 import com.google.appengine.api.NamespaceManager;
 import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
@@ -124,12 +123,12 @@ public class DatastoreThreadedTest {
 
 	}
 
-  @Test
+//  @Test
   public void testInsert100000_10threads() throws InterruptedException, ExecutionException, ClassNotFoundException, SQLException {
       testInsert(10000, 10, jsonSmall);
   }
 
-  @Test
+//  @Test
   public void testInsert50000_10threads() throws InterruptedException, ExecutionException, ClassNotFoundException, SQLException {
       testInsert(50000,10, jsonSmall);
   }
