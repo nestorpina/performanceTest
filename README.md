@@ -19,8 +19,8 @@
 ```
 * To run program : 
 ```
-   cd target/
-   java -Djava.library.path=/usr/local/lib -jar ptest-jar-with-dependencies.jar
+   chmod +x ptest.sh
+   ./ptest.sh
 ```
 
 * Example output :
@@ -34,6 +34,7 @@ Retrieved 1000 (10 producers) in 0:00:00.116
 ```
 usage: java -Djava.library.path=/usr/local/lib -jar
             ptest-jar-with-dependencies.jar [OPTIONS]
+ -csv,--optput-csv      Output values for csv import/export
  -database <DATABASE>    set the DATABASE system to use, valid values :
                          [MYSQL, MONGODB, REDIS (default), SQLSERVER]
  -debug                  activate debug mode
@@ -46,6 +47,21 @@ usage: java -Djava.library.path=/usr/local/lib -jar
  -workers <N>            N: number of workers (threads/consumers) that
                          execute operations. Default : 10
 ```
+
+* Helper script to run all tests: ```./runAllTests.sh```
+```
+MYSQL,NONE,Java,Inserted 50000,7333,,10 producers
+MYSQL,NONE,Java,Retrieved 50000,2981,,10 producers
+MYSQL,NONE,Java,Inserted 100000,14469,,10 producers
+MYSQL,NONE,Java,Retrieved 100000,5763,,10 producers
+MYSQL,ZEROMQ,Java,Inserted 50000,9257,,1 producers / 10 consumers
+MYSQL,ZEROMQ,Java,Retrieved 50000,3606,,1 producers / 10 consumers
+MYSQL,ZEROMQ,Java,Inserted 100000,19391,,1 producers / 10 consumers
+MYSQL,ZEROMQ,Java,Retrieved 100000,7039,,1 producers / 10 consumers
+MYSQL,RABBITMQ,Java,Inserted 50000,22017,,1 producers / 10 consumers
+...
+```
+
 ## Dependencies
 
 * You must have installed and started the database you want to use : REDIS, MONGODB, MYSQL or SQLSERVER
