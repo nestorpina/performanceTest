@@ -56,6 +56,9 @@ public class PerformanceTest {
 
 		ArrayList<Consumer> consumers = null;
 		DatabaseDAO dao = null;
+		
+		System.out.println(String.format("Using DATABASE: %s, QUEUE: %s, WORKERS: %d, EVENTS: %d", 
+				options.getDatabaseType(), options.getQueueType(), options.getNumWorkers(), options.getNumEvents()));
 
 		try {
 
