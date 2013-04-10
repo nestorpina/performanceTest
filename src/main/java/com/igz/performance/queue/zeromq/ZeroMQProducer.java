@@ -63,7 +63,7 @@ public class ZeroMQProducer extends ZeroMq implements Producer {
 
 	private List<String> sendSelects()  {
 		List<String> ids = new ArrayList<String>();
-		for (Object id : idsToSelect) {
+		for (String id : idsToSelect) {
 			String message = operation + SEPARATOR + id;
 			publisher.send(message, 0);
 			if (debug) {

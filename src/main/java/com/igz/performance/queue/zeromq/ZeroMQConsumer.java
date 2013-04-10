@@ -15,8 +15,6 @@ public class ZeroMQConsumer extends ZeroMq implements Consumer {
 		super(queueName);
 		this.name = name;
 		this.dao = databaseDAO;
-		
-		dao.init();
 	}
 
 	/*

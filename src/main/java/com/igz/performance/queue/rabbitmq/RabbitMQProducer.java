@@ -95,7 +95,7 @@ public class RabbitMQProducer extends RabbitMQ implements Callable<List<String>>
 
 	private List<String> sendSelects() throws IOException {
 		List<String> ids = new ArrayList<String>();
-		for (Object id : idsToSelect) {
+		for (String id : idsToSelect) {
 			String message = operation + SEPARATOR + id;
 			channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
 			if (debug) {

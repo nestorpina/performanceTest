@@ -19,8 +19,6 @@ public class RabbitMQConsumer extends RabbitMQ implements Consumer {
 		super(queueName);
 		this.name = name;
 		this.dao = dao;
-
-		dao.init();
 	}
 	
 	/* (non-Javadoc)
