@@ -12,7 +12,14 @@ public class Options {
 	
 	private boolean debug;
 	private boolean showHelp;
+	private boolean outputCsv;
 	
+	public boolean isOutputCsv() {
+		return outputCsv;
+	}
+	public void setOutputCsv(boolean outputCsv) {
+		this.outputCsv = outputCsv;
+	}
 	public int getNumWorkers() {
 		return numWorkers;
 	}

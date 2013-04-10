@@ -14,6 +14,7 @@ import com.igz.performance.queue.QueueFactory.QueueType;
 
 public class OptionsParser {
 	
+	private static final String CSV = "csv";
 	private static final String HELP = "help";
 	private static final String WORKERS = "workers";
 	private static final String DEBUG = "debug";
@@ -72,6 +73,10 @@ public class OptionsParser {
 	            .withDescription(  "show this help" )
 	            .withLongOpt(HELP)
 	            .create( HELP );
+		Option csv = OptionBuilder
+	            .withDescription(  "Output values for csv import/export" )
+	            .withLongOpt("optput-csv")
+	            .create( CSV );
 		Option debug = new Option(DEBUG,"activate debug mode");
 		Options options = new Options();
 		options.addOption(count);
@@ -80,6 +85,7 @@ public class OptionsParser {
 		options.addOption(database);
 		options.addOption(debug);
 		options.addOption(usage);
+		options.addOption(csv);
 		return options;
 	}
 	
@@ -120,6 +126,7 @@ public class OptionsParser {
 		}
 		options.setShowHelp(parsedOptions.hasOption(HELP));
 		options.setDebug(parsedOptions.hasOption(DEBUG));
+		options.setOutputCsv(parsedOptions.hasOption(CSV));
 
 		return options;
 	}
