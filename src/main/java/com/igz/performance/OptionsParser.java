@@ -17,7 +17,7 @@ public class OptionsParser {
 	private static final String HELP = "help";
 	private static final String WORKERS = "workers";
 	private static final String DEBUG = "debug";
-	private static final String NUM_EVENTS = "num";
+	private static final String NUM_EVENTS = "n";
 	private static final String QUEUE = "queue";
 	private static final String DATABASE = "database";
 	
@@ -30,10 +30,12 @@ public class OptionsParser {
 
 	public com.igz.performance.Options parseCommandLineOptions(String[] args) throws ParseException {
 		Options options = createOptions();
+		com.igz.performance.Options igzOptions;
 		CommandLineParser parser = new GnuParser();
 		
 		try {
 			parsedOptions = parser.parse( options, args);
+			igzOptions = buildOptions(parsedOptions);
 		} catch (ParseException e1) {
 				System.out.println(e1.getMessage());
 				System.out.println();
@@ -41,26 +43,20 @@ public class OptionsParser {
 				throw e1;
 		}
 		
-		com.igz.performance.Options igzOptions = buildOptions(parsedOptions);
 		return igzOptions;
 	}
 
 	@SuppressWarnings("static-access")
 	private Options createOptions() {
-		Option javaArgs  = OptionBuilder.withArgName( "property=value" )
-                .hasArgs(2)
-                .withValueSeparator()
-                .withDescription( "use value for given property (jvm arguments)" )
-                .create( "D" );
 		Option count  = OptionBuilder.withArgName( "N" )
 	            .hasArg()
-	            .withDescription(  "N: number of events (insert/select operations) to do " )
+	            .withDescription(  "N: number of events to execute (insert/select operations). Default : 50000" )
 	            .withType(Integer.class)
 	            .withLongOpt("num-events")
 	            .create( NUM_EVENTS );
 		Option workers  = OptionBuilder.withArgName( "N" )
 	            .hasArg()
-	            .withDescription(  "N: number of workers (threads/consumers) that execute operations " )
+	            .withDescription(  "N: number of workers (threads/consumers) that execute operations. Default : 10 " )
 	            .withType(Integer.class)
 	            .create( WORKERS );
 		Option queue = OptionBuilder.withArgName( "QUEUE" )
@@ -84,7 +80,6 @@ public class OptionsParser {
 		options.addOption(database);
 		options.addOption(debug);
 		options.addOption(usage);
-		options.addOption(javaArgs);
 		return options;
 	}
 	
@@ -93,20 +88,36 @@ public class OptionsParser {
 	public void printHelp() {
 		HelpFormatter formatter = new HelpFormatter();
 		Options options = createOptions();
-		formatter.printHelp( "ptest", options );
+		formatter.printHelp( "java -Djava.library.path=/usr/local/lib -jar ptest-jar-with-dependencies.jar [OPTIONS]", options );
 	}
 	
-	private com.igz.performance.Options buildOptions(CommandLine parsedOptions) {
+	private com.igz.performance.Options buildOptions(CommandLine parsedOptions) throws ParseException {
 		com.igz.performance.Options options = new com.igz.performance.Options();
 		
-		DatabaseType databaseType = DatabaseType.valueOf(parsedOptions.getOptionValue(DATABASE, DEFAULT_DATABASE));
-		options.setDatabaseType(databaseType);
+		try {
+			DatabaseType databaseType = DatabaseType.valueOf(parsedOptions.getOptionValue(DATABASE, DEFAULT_DATABASE));
+			options.setDatabaseType(databaseType);
+		} catch (IllegalArgumentException e) {
+			throw new ParseException("Invalid database option : " + parsedOptions.getOptionValue(DATABASE));
+		}
 
-		QueueType queueType = QueueType.valueOf(parsedOptions.getOptionValue(QUEUE, DEFAULT_QUEUE));
-		options.setQueueType(queueType);
-		
-		options.setNumEvents(Integer.parseInt(parsedOptions.getOptionValue(NUM_EVENTS,DEFAULT_NUM_EVENTS)));
-		options.setNumWorkers(Integer.parseInt(parsedOptions.getOptionValue(WORKERS,DEFAULT_WORKERS)));
+		try {
+			QueueType queueType = QueueType.valueOf(parsedOptions.getOptionValue(QUEUE, DEFAULT_QUEUE));
+			options.setQueueType(queueType);
+		} catch (IllegalArgumentException e) {
+			throw new ParseException("Invalid queue option : " + parsedOptions.getOptionValue(QUEUE));
+		}
+
+		try {
+			options.setNumEvents(Integer.parseInt(parsedOptions.getOptionValue(NUM_EVENTS,DEFAULT_NUM_EVENTS)));
+		} catch( NumberFormatException e) {
+			throw new ParseException("Argument is not a number for option: num");
+		}
+		try {
+			options.setNumWorkers(Integer.parseInt(parsedOptions.getOptionValue(WORKERS,DEFAULT_WORKERS)));
+		} catch( NumberFormatException e) {
+			throw new ParseException("Argument is not a number for option: workers");
+		}
 		options.setShowHelp(parsedOptions.hasOption(HELP));
 		options.setDebug(parsedOptions.hasOption(DEBUG));
 
