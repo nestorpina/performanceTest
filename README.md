@@ -19,14 +19,12 @@
 ```
 
 * To run program : 
-
 ```
     cd target/
     java -Djava.library.path=/usr/local/lib -jar ptest-jar-with-dependencies.jar
 ```
 
 * Example output :
-
 ```
 Using DATABASE: MYSQL, QUEUE: NONE, WORKERS: 10, EVENTS: 1000
 Inserted 1000 (10 producers) in 0:00:00.191
@@ -77,7 +75,3 @@ sqlcmd -E -Q "ALTER TABLE testtable ADD PRIMARY KEY (id)"
   * Before building : 
     * Download driver from : http://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=11774
     * Add to local repository : mvn install:install-file -Dfile=sqljdbc4.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
-  
-   
-* 
-
