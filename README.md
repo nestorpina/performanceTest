@@ -9,13 +9,13 @@
 * And using queue systems : 
   * ZeroMQ
   * RabbitMQ
-  * No queue - use database directly 
+  * No queue - send operations directly to the database
 
 ## Usage
 
 * To build executable :
 ```
-    mvn clean compile assembly:single -DskipTests
+    mvn clean package
 ```
 * To run program : 
 ```
@@ -72,6 +72,6 @@ sqlcmd -E -Q "CREATE TABLE testtable ( id VARCHAR(50)  NOT NULL, json TEXT NOT N
 sqlcmd -E -Q "ALTER TABLE testtable ADD PRIMARY KEY (id)"
 ```
 
-  * Before building : 
-    * Download driver from : http://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=11774
-    * Add to local repository : mvn install:install-file -Dfile=sqljdbc4.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
+  * When using SQLSERVER, build prerequisites : 
+     * Download driver from : http://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=11774
+     * Add to local repository : mvn install:install-file -Dfile=sqljdbc4.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
