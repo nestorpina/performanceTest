@@ -22,6 +22,7 @@
    cd target/
    java -Djava.library.path=/usr/local/lib -jar ptest-jar-with-dependencies.jar
 ```
+
 * Example output :
 ```
 Using DATABASE: MYSQL, QUEUE: NONE, WORKERS: 10, EVENTS: 1000
@@ -48,7 +49,8 @@ usage: java -Djava.library.path=/usr/local/lib -jar
 ## Dependencies
 
 * You must have installed and started the database you want to use : REDIS, MONGODB, MYSQL or SQLSERVER
-* You must have installed and started the queue system you want to use
+* You must have installed and started the queue system you want to use.
+  * If using REDIS, we assume libraries are located on /usr/local/lib , if not, change the -Djava.library.path parameter accordingly
 * All connections we'll be to localhost, on the default ports
 * MYSQL :
   * User to connect : root/<empty password>
