@@ -1,4 +1,4 @@
-package com.igz.performance;
+package com.igz.performance.options;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -29,9 +29,9 @@ public class OptionsParser {
 	
 	CommandLine parsedOptions = null;
 
-	public com.igz.performance.Options parseCommandLineOptions(String[] args) throws ParseException {
+	public com.igz.performance.options.Options parseCommandLineOptions(String[] args) throws ParseException {
 		Options options = createOptions();
-		com.igz.performance.Options igzOptions;
+		com.igz.performance.options.Options igzOptions;
 		CommandLineParser parser = new GnuParser();
 		
 		try {
@@ -62,7 +62,7 @@ public class OptionsParser {
 	            .create( WORKERS );
 		Option queue = OptionBuilder.withArgName( "QUEUE" )
 	            .hasArg()
-	            .withDescription(  "set the QUEUE system to use, valid values : [RABBITMQ, ZEROMQ (default)] or leave empty to don't use a queue system" )
+	            .withDescription(  "set the QUEUE system to use, valid values : [RABBITMQ, ZEROMQ (default), AMAZONSQS, NONE] or leave empty to don't use a queue system" )
 	            .create( QUEUE );
 		Option database = OptionBuilder.withArgName( "DATABASE" )
 	            .hasArg()
@@ -97,8 +97,8 @@ public class OptionsParser {
 		formatter.printHelp( "java -Djava.library.path=/usr/local/lib -jar ptest-jar-with-dependencies.jar [OPTIONS]", options );
 	}
 	
-	private com.igz.performance.Options buildOptions(CommandLine parsedOptions) throws ParseException {
-		com.igz.performance.Options options = new com.igz.performance.Options();
+	private com.igz.performance.options.Options buildOptions(CommandLine parsedOptions) throws ParseException {
+		com.igz.performance.options.Options options = new com.igz.performance.options.Options();
 		
 		try {
 			DatabaseType databaseType = DatabaseType.valueOf(parsedOptions.getOptionValue(DATABASE, DEFAULT_DATABASE));

@@ -13,6 +13,8 @@ import org.apache.commons.lang.time.StopWatch;
 
 import com.igz.performance.database.DatabaseDAO;
 import com.igz.performance.database.DatabaseFactory;
+import com.igz.performance.options.Options;
+import com.igz.performance.options.OptionsParser;
 import com.igz.performance.queue.AbstractQueue.OperationType;
 import com.igz.performance.queue.QueueFactory;
 import com.igz.performance.queue.QueueFactory.QueueType;
@@ -42,7 +44,7 @@ public class PerformanceTest {
 	private static int producerWorkers = 1;
 
 	public static void main(String[] args) {
-
+		
 		OptionsParser optionsParser = new OptionsParser();
 		try {
 			options = optionsParser.parseCommandLineOptions(args);

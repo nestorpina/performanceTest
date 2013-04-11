@@ -114,11 +114,13 @@
 			<artifactId>commons-cli</artifactId>
 			<version>1.2</version>
 		</dependency>
-
-
+		<!-- Amazon SDK -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.4.1</version>
+		</dependency>
 	</dependencies>
-
-
 	<repositories>
 		<repository>
 			<id>igzcode-releases</id>

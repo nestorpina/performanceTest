@@ -1,4 +1,4 @@
-package com.igz.performance;
+package com.igz.performance.options;
 
 import com.igz.performance.database.DatabaseFactory.DatabaseType;
 import com.igz.performance.queue.QueueFactory.QueueType;
