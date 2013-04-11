@@ -9,6 +9,7 @@
 * And using queue systems : 
   * ZeroMQ
   * RabbitMQ
+  * Amazon SQS
   * No queue - send operations directly to the database
 
 ## Usage
@@ -66,11 +67,14 @@ MYSQL,RABBITMQ,Java,Inserted 50000,22017,,1 producers / 10 consumers
 
 * You must have installed and started the database you want to use : REDIS, MONGODB, MYSQL or SQLSERVER
 * You must have installed and started the queue system you want to use.
-  * If using REDIS, we assume libraries are located on /usr/local/lib , if not, change the -Djava.library.path parameter accordingly
-* All connections we'll be to localhost, on the default ports
-* MYSQL :
-  * User to connect : root/<empty password>
-  * You should have created the table 'testtable' on test schema :
+* All connections are done to localhost except for AmazonSQS, on the default ports
+
+### Redis
+* If using REDIS, we assume libraries are located on /usr/local/lib , otherwise change the -Djava.library.path parameter accordingly (or edit ptest.sh launcher script)
+
+### Mysql 
+* User to connect : root/\<empty password\>
+* You should have created the table 'testtable' on test schema :
 
 ```
  CREATE TABLE `test`.`testtable` (
@@ -81,7 +85,7 @@ MYSQL,RABBITMQ,Java,Inserted 50000,22017,,1 producers / 10 consumers
 ENGINE = MyISAM;
 ```
 
-* SQLSERVER :
+### SqlServer
   * The test must be executed on a windows machine, with the user logged having rights to access sqlserver
   * You should have created the table 'testtable' on test schema :
 
@@ -93,3 +97,6 @@ sqlcmd -E -Q "ALTER TABLE testtable ADD PRIMARY KEY (id)"
   * When using SQLSERVER, build prerequisites : 
      * Download driver from : http://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=11774
      * Add to local repository : mvn install:install-file -Dfile=sqljdbc4.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
+
+### Amazon SQS
+  * You must provide the Amazon SQS accessKey and secretKey in application.properties 
