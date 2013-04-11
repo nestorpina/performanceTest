@@ -2,6 +2,8 @@ package com.igz.performance.queue.rabbitmq;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.igz.performance.database.DatabaseDAO;
 import com.igz.performance.queue.interfaces.Consumer;
 import com.rabbitmq.client.Channel;
@@ -62,7 +64,7 @@ public class RabbitMQConsumer extends RabbitMQ implements Consumer {
 
 				// Proccess message
 				if (debug) {
-					System.out.println(" [" + name + "] Received '" + message.substring(0, 100) + "'" + (message.length()>100?"...":""));
+					System.out.println(" [" + name + "] Received '" + StringUtils.abbreviate(message, 100) + "'");
 				}
 				String[] msgSplitted = message.split("\\"+SEPARATOR);
 				OperationType operation = OperationType.valueOf(msgSplitted[0]);
