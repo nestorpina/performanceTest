@@ -3,10 +3,12 @@ package com.igz.performance.queue.amazonsqs;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQSClient;
@@ -24,6 +26,7 @@ public class AmazonSQS extends AbstractQueue implements Queue {
 
 	protected com.amazonaws.services.sqs.AmazonSQS connection;
 	protected String myQueueUrl;
+	protected PropertiesConfiguration configuration;
 
 	public AmazonSQS(String queueName) {
 		super(queueName);
@@ -86,15 +89,19 @@ public class AmazonSQS extends AbstractQueue implements Queue {
 	}
 
 	protected com.amazonaws.services.sqs.AmazonSQS getConnection() throws IOException {
-		/*
-		 * This credentials provider implementation loads your AWS credentials from a properties file at the root of your classpath.
-		 * 
-		 * Important: Be sure to fill in your AWS access credentials in the AwsCredentials.properties file before you try to run this
-		 * sample. http://aws.amazon.com/security-credentials
-		 */
-		connection = new AmazonSQSClient(new ClasspathPropertiesFileCredentialsProvider());
-		Region usWest2 = Region.getRegion(Regions.US_WEST_2);
-		connection.setRegion(usWest2);
+		if(connection== null) {
+			try {
+				configuration = new PropertiesConfiguration("application.properties");
+			} catch (ConfigurationException e) {
+				throw new RuntimeException(e);
+			}
+			String accessKey = configuration.getString("accessKey");
+			String secretKey = configuration.getString("secretKey");
+	
+			connection = new AmazonSQSClient(new BasicAWSCredentials(accessKey,secretKey));
+			Region usWest2 = Region.getRegion(Regions.US_WEST_2);
+			connection.setRegion(usWest2);
+		}
 		return connection;
 	}
 
