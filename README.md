@@ -101,7 +101,7 @@ sqlcmd -E -Q "ALTER TABLE testtable ADD PRIMARY KEY (id)"
 ```
 wget http://download.microsoft.com/download/0/2/A/02AAE597-3865-456C-AE7F-613F99F850A8/license.txt
 tar -xf sqljdbc_4.0.2206.100_enu.tar.gz
-mvn install:install-file -Dfile=sqljdbc4.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
+mvn install:install-file -Dfile=sqljdbc_4.0/enu/sqljdbc4.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
 ```
 
 ### Amazon SQS
