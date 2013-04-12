@@ -96,7 +96,13 @@ sqlcmd -E -Q "ALTER TABLE testtable ADD PRIMARY KEY (id)"
 
   * When using SQLSERVER, build prerequisites : 
      * Download driver from : http://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=11774
-     * Add to local repository : mvn install:install-file -Dfile=sqljdbc4.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
+     * Add to local repository
+
+```
+wget http://download.microsoft.com/download/0/2/A/02AAE597-3865-456C-AE7F-613F99F850A8/license.txt
+tar -xf sqljdbc_4.0.2206.100_enu.tar.gz
+mvn install:install-file -Dfile=sqljdbc4.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
+```
 
 ### Amazon SQS
   * You must provide the Amazon SQS accessKey and secretKey in application.properties 
